@@ -24,7 +24,7 @@ REM ============================================
 REM 1. Microsoft Edge プロセスの終了
 REM ============================================
 echo.
-echo [1/5] Microsoft Edge プロセスを終了しています...
+echo [1/6] Microsoft Edge プロセスを終了しています...
 
 tasklist /FI "IMAGENAME eq msedge.exe" 2>NUL | find /I /N "msedge.exe">NUL
 if "%ERRORLEVEL%"=="0" (
@@ -44,7 +44,7 @@ REM ============================================
 REM 2. Edge ユーザーデータの削除
 REM ============================================
 echo.
-echo [2/5] Edge ユーザーデータを削除しています...
+echo [2/6] Edge ユーザーデータを削除しています...
 
 set EDGE_DATA="%LOCALAPPDATA%\Microsoft\Edge\User Data"
 if exist %EDGE_DATA% (
@@ -62,7 +62,7 @@ REM ============================================
 REM 3. Bob関連データの削除
 REM ============================================
 echo.
-echo [3/5] Bob関連データを削除しています...
+echo [3/6] Bob関連データを削除しています...
 
 set BOB_DIRS[0]="%USERPROFILE%\.bob"
 set BOB_DIRS[1]="%LOCALAPPDATA%\.bobide"
@@ -87,7 +87,7 @@ REM ============================================
 REM 4. 一時ファイルのクリーンアップ
 REM ============================================
 echo.
-echo [4/5] 一時ファイルをクリーンアップしています...
+echo [4/6] 一時ファイルをクリーンアップしています...
 
 del /F /Q "%TEMP%\*" >nul 2>&1
 if !errorLevel! equ 0 (
@@ -97,10 +97,23 @@ if !errorLevel! equ 0 (
 )
 
 REM ============================================
-REM 5. 完了
+REM 5. ゴミ箱のクリア
 REM ============================================
 echo.
-echo [5/5] クリーンアップが完了しました
+echo [5/6] ゴミ箱をクリアしています...
+
+powershell -NoProfile -Command "Clear-RecycleBin -Force" >nul 2>&1
+if !errorLevel! equ 0 (
+    echo   [成功] ゴミ箱をクリアしました
+) else (
+    echo   [警告] ゴミ箱のクリアに失敗しました
+)
+
+REM ============================================
+REM 6. 完了
+REM ============================================
+echo.
+echo [6/6] クリーンアップが完了しました
 echo.
 echo ============================================
 echo すべての処理が完了しました
