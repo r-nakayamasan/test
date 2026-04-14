@@ -1,10 +1,9 @@
 @echo off
-chcp 65001 >nul
 REM ============================================
-REM Edge & Bob関連データクリーンアップスクリプト
+REM Edge & Bob Data Cleanup Script
 REM ============================================
-REM 作成日: 2026-04-14
-REM 説明: Microsoft EdgeとBob関連のデータを削除します
+REM Created: 2026-04-14
+REM Description: Removes Microsoft Edge and Bob-related data
 REM ============================================
 
 setlocal enabledelayedexpansion
@@ -12,58 +11,58 @@ setlocal enabledelayedexpansion
 set TIMESTAMP=%date:~0,4%-%date:~5,2%-%date:~8,2% %time:~0,2%:%time:~3,2%:%time:~6,2%
 
 echo.
-echo [%TIMESTAMP%] クリーンアップを開始します...
+echo [%TIMESTAMP%] Starting cleanup...
 
-REM 管理者権限チェック
+REM Check administrator privileges
 net session >nul 2>&1
 if %errorLevel% neq 0 (
-    echo [警告] 管理者権限で実行されていません。一部の操作が失敗する可能性があります。
+    echo [WARNING] Not running with administrator privileges. Some operations may fail.
     pause
 )
 
 REM ============================================
-REM 1. Microsoft Edge プロセスの終了
+REM 1. Terminate Microsoft Edge Process
 REM ============================================
 echo.
-echo [1/6] Microsoft Edge プロセスを終了しています...
+echo [1/6] Terminating Microsoft Edge process...
 
 tasklist /FI "IMAGENAME eq msedge.exe" 2>NUL | find /I /N "msedge.exe">NUL
 if "%ERRORLEVEL%"=="0" (
     taskkill /F /IM msedge.exe >nul 2>&1
     if !errorLevel! equ 0 (
-        echo   [成功] Microsoft Edge を終了しました
+        echo   [SUCCESS] Microsoft Edge terminated
     ) else (
-        echo   [エラー] Microsoft Edge の終了に失敗しました
+        echo   [ERROR] Failed to terminate Microsoft Edge
     )
 ) else (
-    echo   [情報] Microsoft Edge は実行されていません
+    echo   [INFO] Microsoft Edge is not running
 )
 
 timeout /t 2 /nobreak >nul
 
 REM ============================================
-REM 2. Edge ユーザーデータの削除
+REM 2. Delete Edge User Data
 REM ============================================
 echo.
-echo [2/6] Edge ユーザーデータを削除しています...
+echo [2/6] Deleting Edge user data...
 
 set EDGE_DATA="%LOCALAPPDATA%\Microsoft\Edge\User Data"
 if exist %EDGE_DATA% (
     rmdir /S /Q %EDGE_DATA% >nul 2>&1
     if !errorLevel! equ 0 (
-        echo   [成功] Edge ユーザーデータを削除しました
+        echo   [SUCCESS] Edge user data deleted
     ) else (
-        echo   [エラー] Edge ユーザーデータの削除に失敗しました
+        echo   [ERROR] Failed to delete Edge user data
     )
 ) else (
-    echo   [情報] Edge ユーザーデータは存在しません
+    echo   [INFO] Edge user data does not exist
 )
 
 REM ============================================
-REM 3. Bob関連データの削除
+REM 3. Delete Bob-related Data
 REM ============================================
 echo.
-echo [3/6] Bob関連データを削除しています...
+echo [3/6] Deleting Bob-related data...
 
 set BOB_DIRS[0]="%USERPROFILE%\.bob"
 set BOB_DIRS[1]="%LOCALAPPDATA%\.bobide"
@@ -75,49 +74,49 @@ for /L %%i in (0,1,3) do (
     if exist !DIR! (
         rmdir /S /Q !DIR! >nul 2>&1
         if !errorLevel! equ 0 (
-            echo   [成功] !DIR! を削除しました
+            echo   [SUCCESS] Deleted !DIR!
         ) else (
-            echo   [エラー] !DIR! の削除に失敗しました
+            echo   [ERROR] Failed to delete !DIR!
         )
     ) else (
-        echo   [情報] !DIR! は存在しません
+        echo   [INFO] !DIR! does not exist
     )
 )
 
 REM ============================================
-REM 4. 一時ファイルのクリーンアップ
+REM 4. Clean Temporary Files
 REM ============================================
 echo.
-echo [4/6] 一時ファイルをクリーンアップしています...
+echo [4/6] Cleaning temporary files...
 
 del /F /Q "%TEMP%\*" >nul 2>&1
 if !errorLevel! equ 0 (
-    echo   [成功] 一時ファイルを削除しました
+    echo   [SUCCESS] Temporary files deleted
 ) else (
-    echo   [警告] 一部の一時ファイルの削除に失敗しました
+    echo   [WARNING] Some temporary files could not be deleted
 )
 
 REM ============================================
-REM 5. ゴミ箱のクリア
+REM 5. Clear Recycle Bin
 REM ============================================
 echo.
-echo [5/6] ゴミ箱をクリアしています...
+echo [5/6] Clearing recycle bin...
 
 powershell -NoProfile -Command "Clear-RecycleBin -Force" >nul 2>&1
 if !errorLevel! equ 0 (
-    echo   [成功] ゴミ箱をクリアしました
+    echo   [SUCCESS] Recycle bin cleared
 ) else (
-    echo   [警告] ゴミ箱のクリアに失敗しました
+    echo   [WARNING] Failed to clear recycle bin
 )
 
 REM ============================================
-REM 6. 完了
+REM 6. Complete
 REM ============================================
 echo.
-echo [6/6] クリーンアップが完了しました
+echo [6/6] Cleanup completed
 echo.
 echo ============================================
-echo すべての処理が完了しました
+echo All operations completed
 echo ============================================
 echo.
 
